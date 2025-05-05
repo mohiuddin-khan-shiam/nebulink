@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Glow effect -->
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+    </defs>
+    
+    <!-- Rhythm Source -->
+    <g id="rhythm-source" transform="translate(100,100)">
+        <circle cx="0" cy="0" r="30" fill="#00ff9d" filter="url(#glow)"/>
+        <circle cx="0" cy="0" r="25" fill="#00cc7d"/>
+        <path d="M-15,-15 L15,15 M-15,15 L15,-15" stroke="#ffffff" stroke-width="3"/>
+    </g>
+    
+    <!-- Rhythm Node -->
+    <g id="rhythm-node" transform="translate(300,100)">
+        <circle cx="0" cy="0" r="25" fill="#ffcc00" filter="url(#glow)"/>
+        <circle cx="0" cy="0" r="20" fill="#cc9900"/>
+        <circle cx="0" cy="0" r="10" fill="#ffffff"/>
+    </g>
+    
+    <!-- Rhythm Target -->
+    <g id="rhythm-target" transform="translate(500,100)">
+        <circle cx="0" cy="0" r="30" fill="#ff00ff" filter="url(#glow)"/>
+        <circle cx="0" cy="0" r="25" fill="#cc00cc"/>
+        <path d="M-10,0 L10,0 M0,-10 L0,10" stroke="#ffffff" stroke-width="3"/>
+    </g>
+    
+    <!-- Connection Line -->
+    <g id="connection">
+        <path d="M130,100 L270,100" stroke="#ffffff" stroke-width="2" stroke-dasharray="5,5"/>
+    </g>
+</svg> 
