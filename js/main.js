@@ -1,14 +1,40 @@
 // Game Constants
 const FPS = 60;
 const FRAME_TIME = 1000 / FPS;
+const BPM = 120; // Base tempo for rhythm game
+const BEAT_INTERVAL = 60000 / BPM; // Convert BPM to milliseconds
 
 // Game State
 let lastTime = 0;
 let accumulator = 0;
 let gameState = {
-    player: { x: 0, y: 0 },
-    entities: []
+    currentLevel: 1,
+    score: 0,
+    combo: 0,
+    maxCombo: 0,
+    player: {
+        x: 0,
+        y: 0,
+        energy: 100,
+        instruments: []
+    },
+    entities: [],
+    rhythm: {
+        currentBeat: 0,
+        totalBeats: 16,
+        lastBeatTime: 0,
+        isPlaying: false
+    },
+    ui: {
+        showMenu: false,
+        showTutorial: true,
+        showSettings: false
+    }
 };
+
+// Audio Context
+let audioContext;
+let masterGain;
 
 // Main Game Loop
 function gameLoop(timestamp) {
@@ -30,26 +56,135 @@ function gameLoop(timestamp) {
 }
 
 function update(deltaTime) {
-    // Update game state here
+    if (gameState.rhythm.isPlaying) {
+        updateRhythm(deltaTime);
+    }
+    
+    updateEntities(deltaTime);
+    checkCollisions();
+    updateUI();
+}
+
+function updateRhythm(deltaTime) {
+    const currentTime = performance.now();
+    const timeSinceLastBeat = currentTime - gameState.rhythm.lastBeatTime;
+    
+    if (timeSinceLastBeat >= BEAT_INTERVAL) {
+        gameState.rhythm.currentBeat = (gameState.rhythm.currentBeat + 1) % gameState.rhythm.totalBeats;
+        gameState.rhythm.lastBeatTime = currentTime;
+        
+        // Trigger beat events
+        onBeat(gameState.rhythm.currentBeat);
+    }
+}
+
+function onBeat(beatNumber) {
+    // Check for player actions on this beat
+    checkPlayerActions(beatNumber);
+    
+    // Update visual feedback
+    updateBeatVisuals(beatNumber);
+    
+    // Play beat sound
+    playBeatSound(beatNumber);
+}
+
+function updateEntities(deltaTime) {
+    gameState.entities.forEach(entity => {
+        if (entity.update) {
+            entity.update(deltaTime);
+        }
+    });
+}
+
+function checkCollisions() {
+    // Implement collision detection for circuit components
+}
+
+function updateUI() {
+    // Update HUD elements
+    updateHUD();
+    
+    // Update menus if visible
+    if (gameState.ui.showMenu) {
+        updateMenu();
+    }
+    
+    if (gameState.ui.showTutorial) {
+        updateTutorial();
+    }
 }
 
 function render() {
-    // Render game here
+    const ctx = getCanvasContext();
+    if (!ctx) return;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    
+    // Draw background
+    drawBackground(ctx);
+    
+    // Draw game entities
+    drawEntities(ctx);
+    
+    // Draw UI elements
+    drawUI(ctx);
 }
 
 // Initialize game
-function init() {
+async function init() {
+    // Setup canvas
     const canvas = document.getElementById('game-canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    setupCanvas(canvas);
     
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
+    // Initialize audio
+    await initAudio();
+    
+    // Load assets
+    await loadAssets();
+    
+    // Setup event listeners
+    setupEventListeners();
+    
+    // Load saved game state
+    loadGameState();
     
     // Start game loop
     requestAnimationFrame(gameLoop);
+}
+
+async function initAudio() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioContext.createGain();
+    masterGain.connect(audioContext.destination);
+}
+
+function setupCanvas(canvas) {
+    // Set initial size
+    resizeCanvas(canvas);
+    
+    // Handle window resize
+    window.addEventListener('resize', () => resizeCanvas(canvas));
+}
+
+function resizeCanvas(canvas) {
+    const container = canvas.parentElement;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    
+    // Maintain 16:9 aspect ratio
+    const aspectRatio = 16 / 9;
+    let width = containerWidth;
+    let height = containerWidth / aspectRatio;
+    
+    if (height > containerHeight) {
+        height = containerHeight;
+        width = containerHeight * aspectRatio;
+    }
+    
+    canvas.width = width;
+    canvas.height = height;
 }
 
 // Start game when DOM is loaded
