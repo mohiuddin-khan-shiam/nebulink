@@ -1,17 +1,67 @@
 {
-    "name": "Level 1",
-    "width": 800,
-    "height": 600,
-    "playerStart": {"x": 100, "y": 100},
-    "platforms": [
-        {"x": 0, "y": 550, "width": 800, "height": 50},
-        {"x": 200, "y": 450, "width": 100, "height": 20},
-        {"x": 400, "y": 350, "width": 100, "height": 20}
+    "id": "level01",
+    "name": "First Steps",
+    "description": "Learn the basics of rhythm circuits",
+    "bpm": 90,
+    "timeLimit": 120,
+    "targetScore": 1000,
+    "components": [
+        {
+            "id": "start",
+            "type": "rhythmSource",
+            "x": 100,
+            "y": 300,
+            "properties": {
+                "pattern": [1, 0, 0, 0, 1, 0, 0, 0],
+                "color": "#00ff9d"
+            }
+        },
+        {
+            "id": "target",
+            "type": "rhythmTarget",
+            "x": 700,
+            "y": 300,
+            "properties": {
+                "pattern": [1, 0, 0, 0, 1, 0, 0, 0],
+                "color": "#ff00ff"
+            }
+        }
     ],
-    "enemies": [
-        {"x": 300, "y": 500, "width": 30, "height": 30, "type": "basic"}
+    "availableComponents": [
+        {
+            "type": "rhythmNode",
+            "properties": {
+                "color": "#ffcc00",
+                "delay": 0
+            }
+        },
+        {
+            "type": "rhythmNode",
+            "properties": {
+                "color": "#ffcc00",
+                "delay": 2
+            }
+        }
     ],
-    "collectibles": [
-        {"x": 500, "y": 300, "width": 20, "height": 20, "type": "coin"}
-    ]
+    "tutorial": {
+        "steps": [
+            {
+                "text": "Welcome to Intergalactic Jazz Circuit!",
+                "position": "center"
+            },
+            {
+                "text": "Connect the rhythm source to the target using nodes",
+                "position": "top"
+            },
+            {
+                "text": "Match the rhythm pattern to power your colony",
+                "position": "bottom"
+            }
+        ]
+    },
+    "rewards": {
+        "score": 1000,
+        "unlocks": ["level02"],
+        "instruments": ["basicDrum"]
+    }
 }
