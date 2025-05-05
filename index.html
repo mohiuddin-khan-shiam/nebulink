@@ -3,14 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vanilla JS Game</title>
+    <meta name="description" content="Intergalactic Jazz Circuit - A rhythm-puzzle game where you conduct an alien jazz band by solving rhythm circuits">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <title>Intergalactic Jazz Circuit</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="assets/img/favicon-16x16.png" sizes="16x16">
+    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <!-- Game Container -->
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
         <div id="ui-layer"></div>
+        
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-content">
+                <div class="loading-icon">🎵</div>
+                <div class="loading-text">Loading Intergalactic Jazz Circuit...</div>
+                <div class="loading-progress">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <!-- Game Scripts -->
     <script src="js/main.js" type="module"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    </script>
+    
+    <!-- PWA Install Prompt -->
+    <script>
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button if needed
+            const installButton = document.createElement('button');
+            installButton.textContent = 'Install Game';
+            installButton.className = 'button install-button';
+            installButton.style.display = 'none';
+            
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to the install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                }
+            });
+            
+            document.body.appendChild(installButton);
+            installButton.style.display = 'block';
+        });
+    </script>
 </body>
 </html>

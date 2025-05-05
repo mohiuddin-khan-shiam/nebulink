@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Intergalactic Jazz Circuit</title>
+    <style>
+        :root {
+            --bg-primary: #121212;
+            --text-primary: #ffffff;
+            --accent-primary: #00ff9d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .button {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            .button {
+                padding: 0.8rem 1.6rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🎵</div>
+        <h1>You're Offline</h1>
+        <p>
+            It seems you've lost your connection to the cosmic network.
+            Don't worry, your rhythm circuit is still intact!
+        </p>
+        <p>
+            Please check your internet connection and try again.
+            Once you're back online, your progress will be synchronized.
+        </p>
+        <button class="button" onclick="window.location.reload()">
+            Try Again
+        </button>
+    </div>
+    
+    <script>
+        // Check for online status
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+        
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed:', err);
+                });
+        }
+    </script>
+</body>
+</html> 
