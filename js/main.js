@@ -129,6 +129,13 @@ function update(deltaTime) {
         updateRhythm(deltaTime);
     }
     
+    if (pulseActive) {
+        pulseProgress += deltaTime / 300; // speed of pulse
+        if (pulseProgress >= pulsePath.length - 1) {
+            pulseActive = false;
+            checkWin();
+        }
+    }
     updateEntities(deltaTime);
     checkCollisions();
     updateUI();
@@ -228,6 +235,39 @@ function drawBackground(ctx) {
 }
 
 function drawEntities(ctx) {
+    // Draw connections first
+    ctx.save();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 4;
+    ctx.globalAlpha = 0.5;
+    connections.forEach(conn => {
+        ctx.beginPath();
+        ctx.moveTo(conn.from.x, conn.from.y);
+        ctx.lineTo(conn.to.x, conn.to.y);
+        ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    // Draw pulse
+    if (pulseActive && pulsePath.length > 1) {
+        const idx = Math.floor(pulseProgress);
+        const frac = pulseProgress - idx;
+        if (idx < pulsePath.length - 1) {
+            const a = pulsePath[idx];
+            const b = pulsePath[idx + 1];
+            const x = a.x + (b.x - a.x) * frac;
+            const y = a.y + (b.y - a.y) * frac;
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(x, y, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#00ff9d';
+            ctx.globalAlpha = 0.8;
+            ctx.shadowColor = '#00ff9d';
+            ctx.shadowBlur = 20;
+            ctx.fill();
+            ctx.restore();
+        }
+    }
     // Draw game entities
     gameState.entities.forEach(entity => {
         if (entity.draw) {
@@ -366,6 +406,9 @@ function handleKeyDown(event) {
     switch(event.key) {
         case ' ':
             // Space bar - activate rhythm
+            if (!pulseActive) {
+                startPulse();
+            }
             break;
         case 'p':
         case 'P':
@@ -386,12 +429,24 @@ function handleKeyUp(event) {
 
 // Drag-and-drop logic
 let draggingComponent = null;
+let connections = [];
+let connectingFrom = null;
 
 function handleMouseDown(event) {
     const { offsetX, offsetY } = getCanvasRelative(event);
     for (let i = gameState.entities.length - 1; i >= 0; i--) {
         const entity = gameState.entities[i];
         if (entity.containsPoint(offsetX, offsetY)) {
+            if (event.shiftKey) {
+                // Start or finish a connection
+                if (!connectingFrom) {
+                    connectingFrom = entity;
+                } else if (connectingFrom !== entity) {
+                    connections.push({ from: connectingFrom, to: entity });
+                    connectingFrom = null;
+                }
+                return;
+            }
             draggingComponent = entity;
             entity.isDragging = true;
             entity.offsetX = offsetX - entity.x;
@@ -481,6 +536,50 @@ async function loadLevel(levelId = 'level01') {
             properties: comp.properties
         }));
         x += 100;
+    }
+}
+
+// Rhythm pulse logic
+let pulseActive = false;
+let pulseProgress = 0;
+let pulsePath = [];
+
+function startPulse() {
+    // Find path from source to target
+    const source = gameState.entities.find(e => e.type === 'rhythmSource');
+    const target = gameState.entities.find(e => e.type === 'rhythmTarget');
+    pulsePath = findPath(source, target, connections);
+    if (pulsePath.length > 1) {
+        pulseActive = true;
+        pulseProgress = 0;
+    }
+}
+
+function findPath(source, target, connections) {
+    // Simple BFS for path
+    let queue = [[source]];
+    let visited = new Set([source]);
+    while (queue.length) {
+        let path = queue.shift();
+        let last = path[path.length - 1];
+        if (last === target) return path;
+        for (let conn of connections) {
+            if (conn.from === last && !visited.has(conn.to)) {
+                visited.add(conn.to);
+                queue.push([...path, conn.to]);
+            }
+        }
+    }
+    return [];
+}
+
+function checkWin() {
+    // For now, just show a message if pulse reached target
+    const target = gameState.entities.find(e => e.type === 'rhythmTarget');
+    if (pulsePath[pulsePath.length - 1] === target) {
+        alert('Success! Rhythm reached the target!');
+    } else {
+        alert('Failed! No valid path to target.');
     }
 }
 
