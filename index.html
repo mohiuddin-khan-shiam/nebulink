@@ -11,9 +11,8 @@
     <title>Intergalactic Jazz Circuit</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/img/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="assets/img/favicon-16x16.png" sizes="16x16">
-    <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+    <link rel="apple-touch-icon" href="assets/img/favicon.svg">
     
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css">
@@ -30,7 +29,12 @@
     <!-- Game Container -->
     <div id="game-container">
         <canvas id="game-canvas"></canvas>
-        <div id="ui-layer"></div>
+        <div id="ui-layer">
+            <!-- HUD Elements -->
+            <div id="score" class="hud hud-top">Score: 0</div>
+            <div id="combo" class="hud hud-top">Combo: 0x</div>
+            <div id="energy" class="hud hud-bottom">Energy: 100%</div>
+        </div>
         
         <!-- Loading Screen -->
         <div id="loading-screen" class="loading-screen">
@@ -45,6 +49,24 @@
     </div>
     
     <!-- Game Scripts -->
+    <script type="module">
+        import { ui } from './js/ui.js';
+        import { storage } from './js/storage.js';
+        import { physics, rhythm, circuit } from './js/engine.js';
+        import BeatSound from './assets/audio/beat.js';
+        import MusicGenerator from './assets/audio/music.js';
+        
+        // Make these available globally
+        window.gameModules = {
+            ui,
+            storage,
+            physics,
+            rhythm,
+            circuit,
+            BeatSound,
+            MusicGenerator
+        };
+    </script>
     <script src="js/main.js" type="module"></script>
     
     <!-- Service Worker Registration -->
