@@ -1,24 +1,175 @@
+:root {
+    /* Theme colors */
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --accent-primary: #00ff9d;
+    --accent-secondary: #ff00ff;
+    
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 2rem;
+    
+    /* Animation */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     overflow: hidden;
-    background: #121212;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
+/* Game container */
 #game-container {
     position: relative;
     width: 100vw;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-primary);
 }
 
+/* Canvas */
 #game-canvas {
     display: block;
     width: 100%;
     height: 100%;
+    max-width: 1920px;
+    max-height: 1080px;
+    aspect-ratio: 16/9;
+    background: var(--bg-secondary);
 }
 
+/* UI Layer */
 #ui-layer {
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
+    z-index: 10;
+}
+
+/* UI Elements */
+.ui-element {
+    pointer-events: auto;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid var(--accent-primary);
+    border-radius: 8px;
+    padding: var(--spacing-md);
+    color: var(--text-primary);
+    transition: var(--transition-normal);
+}
+
+/* Buttons */
+.button {
+    background: var(--accent-primary);
+    color: var(--bg-primary);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition-fast);
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 157, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    :root {
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1.5rem;
+    }
+    
+    .ui-element {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Color Blind Mode */
+.colorblind-mode {
+    --accent-primary: #0077bb;
+    --accent-secondary: #ee7733;
+}
+
+/* Loading Screen */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Game Menu */
+.game-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: var(--spacing-lg);
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* HUD Elements */
+.hud {
+    position: absolute;
+    padding: var(--spacing-md);
+}
+
+.hud-top {
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hud-bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
 }
